@@ -1,8 +1,2 @@
-
-    let cart = localStorage.getItem("cart");
-    let contact = localStorage.getItem("contact");
-
-
-
-    fetch('http://localhost:3000/api/cart/')
-        .then((response) => response.json())
+let orderid = new URLSearchParams(document.location.search).get("orderid");
+document.getElementById("orderId").innerHTML = orderid;

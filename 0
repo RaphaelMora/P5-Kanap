@@ -136,60 +136,43 @@ for (let product of cart) {
         }
     }
 }
+////Form
+let firstName = document.getElementById('firstName');
+let regexName = new RegExp('^[a-zA-Z\-àèìòùÀÈÌÒÙáéíóúýÁÉÍÓÚÝâêîôûÂÊÎÔÛãñõÃÑÕäëïöüÿÄËÏÖÜŸçÇßØøÅåÆæœ\s]{2,50}$', 'g');
+let firstNameErrorMsg = document.getElementById('firstNameErrorMsg');
+if (regexName.test(firstName.value) === false) {
+    firstNameErrorMsg.innerHTML = "Prénom invalide"
+}
 
-document.getElementById("order").addEventListener("click", (e) => {
-    e.preventDefault();
+let lastName = document.getElementById('lastName');
+let lastNameErrorMsg = document.getElementById('lastNameErrorMsg');
+if (regexName.test(lastName.value) === false) {
+    lastNameErrorMsg.innerHTML = "Nom invalide"
+}
 
-    let nameRegex = /^[a-zA-Z\-àèìòùÀÈÌÒÙáéíóúýÁÉÍÓÚÝâêîôûÂÊÎÔÛãñõÃÑÕäëïöüÿÄËÏÖÜŸçÇßØøÅåÆæœ\s]{2,50}$/;
-    let firstName = document.getElementById("firstName");
-    if (firstName.value == "" || nameRegex.test(firstName.value) == false) {
-        document.getElementById("firstNameErrorMsg").textContent =
-            "Merci de renseigner votre prénom";
-        return;
-    } else {
-        document.getElementById("firstNameErrorMsg").textContent = "";
-    }
+let regexAdress = new RegExp('^[a-zA-Z0-9àèìòùÀÈÌÒÙáéíóúýÁÉÍÓÚÝâêîôûÂÊÎÔÛäëïöüÿÄËÏÖÜŸçÇæœ,-\s{0,45}]+$', 'g');
+let address = document.getElementById('address');
+let addressErrorMsg = document.getElementById('addressErrorMsg');
+if (regexAdress.test(address.value) === false) {
+    addressErrorMsg.innerHTML = "Adresse invalide"
+}
 
-    let lastName = document.getElementById("lastName");
-    if (lastName.value == "" || nameRegex.test(lastName.value) == false) {
-        document.getElementById("lastNameErrorMsg").textContent =
-            "Merci de renseigner votre nom";
-        return;
-    } else {
-        document.getElementById("lastNameErrorMsg").textContent = "";
-    }
-    let addressRegex = /^[a-zA-Z0-9àèìòùÀÈÌÒÙáéíóúýÁÉÍÓÚÝâêîôûÂÊÎÔÛäëïöüÿÄËÏÖÜŸçÇæœ,-\s{0,45}]+$/;
-    let address = document.getElementById("address");
-    if (address.value == "" || addressRegex.test(address.value) == false) {
-        document.getElementById("addressErrorMsg").textContent =
-            "Merci de renseigner votre adresse";
-        return;
-    } else {
-        document.getElementById("addressErrorMsg").textContent = "";
-    }
-    let cityRegex = /^[a-zA-Z-àèìòùÀÈÌÒÙáéíóúýÁÉÍÓÚÝâêîôûÂÊÎÔÛäëïöüÿÄËÏÖÜŸçÇæœ\s]+$/;
-    let city = document.getElementById("city");
-    if (city.value == "" || cityRegex.test(city.value) == false) {
-        document.getElementById("cityErrorMsg").textContent = "Merci de renseigner votre ville";
-        return;
-    } else {
-        document.getElementById("cityErrorMsg").textContent = "";
-    }
-    let emailRegex = /[\w.-\S]+[@][\w\d\S]+[.][\w\d\S]{2,8}$/;
-    let email = document.getElementById("email");
-    if (email.value == "" || emailRegex.test(email.value) == false) {
-        document.getElementById("emailErrorMsg").textContent =
-            "Merci de renseigner votre adresse email";
-        return;
-    } else {
-        document.getElementById("emailErrorMsg").textContent = "";
-    }
+let regexCity = new RegExp('^[a-zA-Z-àèìòùÀÈÌÒÙáéíóúýÁÉÍÓÚÝâêîôûÂÊÎÔÛäëïöüÿÄËÏÖÜŸçÇæœ\s]+$', 'g')
+let city = document.getElementById('city');
+let cityErrorMsg = document.getElementById('cityErrorMsg');
+if (regexCity.test(city.value) === false) {
+    cityErrorMsg.innerHTML = "Adresse invalide"
+}
 
-    let products = [];
-    cart.forEach((element) => {
-        products.push(element.id);
-    });
+let regexMail = new RegExp('^[\w.-\S]+[@][\w\d\S]+[.][\w\d\S]{2,8}$', 'g')
+let email = document.getElementById('email');
+let emailErrorMsg = document.getElementById('emailErrorMsg');
+if (regexMail.test(email.value) === false) {
+    emailErrorMsg.innerHTML = "Adresse invalide"
+}
 
+let products = [];
+function recupproducts() {
     let contactInformations = {
         contact: {
             firstName: firstName.value,
@@ -198,23 +181,71 @@ document.getElementById("order").addEventListener("click", (e) => {
             city: city.value,
             email: email.value,
         },
-        productId: products,
+        products: products,
     };
+    for (let i = 0; i < getCart.length; i++) {
+        products.push(getCart[i].productID);
+    }
+}
 
-    let cartConfirmation = {
-        method: "POST",
-        headers: {
-            Accept: "application/json",
-            "Content-type": "application/json",
-        },
-        body: JSON.stringify(contactInformations),
-    };
+let cartConfirmation = fetch('http://localhost:3000/api/products/order', {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json;charset=utf-8'
+    },
+    body: JSON.stringify(contactInformations())
 
-    fetch("http://localhost:3000/api/products/order", cartConfirmation)
         .then((response) => response.json())
         .then(() => {
             location.href = `./confirmation.html?orderid=${products}`;
             localStorage.clear();
         })
-}
-);
+})
+    ;
+
+
+
+
+
+
+
+
+
+
+
+
+
+    function getProductId() {
+        //retrieve the url
+        let url = new URL(window.location.href);
+        let searchParams = new URLSearchParams(url.search);
+        //if "OrderID" exists = return the value
+        if (searchParams.has("orderid")) {
+           let id = searchParams.get("orderid");
+           return id;
+        } else {
+           console.log("Error, no order Id found");
+        }
+     }
+     
+     // Display OrderID on page load
+     window.addEventListener("load", () => {
+        const orderId = document.getElementById("orderId");
+        orderId.innerText = getProductId();
+     });
+     
+     //-------------------------------- Display Product Quantity in Navigation ---------------------------------------//
+     
+     function showItemInCart() {
+        let totalItem = 0;
+        if (cart == null) {
+           return;
+        } else {
+           for (let i = 0; i < cart.length; i++) {
+              totalItem += cart[i].quantity;
+           }
+           document.getElementById("itemInCart").textContent = ` ${totalItem}`;
+        }
+     }
+     
+     showItemInCart();
