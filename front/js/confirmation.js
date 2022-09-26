@@ -1,2 +1,3 @@
-let orderid = new URLSearchParams(document.location.search).get("orderid");
-document.getElementById("orderId").innerHTML = orderid;
+let orderId = new URLSearchParams(document.location.search).get("orderId");
+document.getElementById("orderId").innerHTML = orderId;
+alert("Merci pour votre commande")

@@ -1,4 +1,4 @@
-// récupération du panier du localstorage
+// retrieve the content of the localStorage
 let cart = jsonCart();
 function jsonCart() {
     let cart = localStorage.getItem("cart");
@@ -9,7 +9,7 @@ function jsonCart() {
     }
 }
 
-//create while with all data from lS
+//Object that contains all the information for each product
 for (let product of cart) {
     let dataCart =
     {
@@ -19,6 +19,7 @@ for (let product of cart) {
         price: product.price
     }
 
+    //Displaying the contents of the Local Storage
     fetch('http://localhost:3000/api/products/' + dataCart.id)
         .then((response) => response.json())
         .then((product) => showProducts(product))
@@ -93,55 +94,50 @@ for (let product of cart) {
         input.value = dataCart.quantity;
         quantityDiv.appendChild(input);
 
+        //Display the total number of products in the cart
         let totalQuantity = document.querySelector("#totalQuantity")
         let totalQ = cart.reduce((totalQ, product) => totalQ + product.quantity, 0)
         totalQuantity.textContent = totalQ
 
+        //Display of total prices
         let totalPrice = document.querySelector("#totalPrice")
         cart.forEach((cart) => {
             let totalP = cart.price * totalQ
             totalPrice.textContent = totalP
         })
 
-        input.addEventListener("change", (a) => {
-            a.preventDefault();
-            let modifyId = dataCart.id;
-            let modifycolor = dataCart.color;
-            let modifyProduct = cart.find((p) => p.id == modifyId) && cart.find((p) => p.color == modifycolor);
-            if (modifyProduct) {
-                modifyProduct.quantite = input.value;
-                localStorage.setItem("cart", JSON.stringify(modifyProduct));
-
-            } else {
-                cart.push(productChange);
-                localStorage.setItem("cart", JSON.stringify(cart));
-            }
-            redirect();
+        //Update quantity
+        let itemQuantity = document.querySelectorAll(".itemQuantity");
+        for (let i = 0; i < itemQuantity.length; i++) {
+           itemQuantity[i].addEventListener("click", () => {
+              let modifyQuantity = parseInt(itemQuantity[i].value);
+              cart[i].quantity = modifyQuantity;
+              localStorage.setItem("cart", JSON.stringify(cart));
+              window.location.reload();
+           });
         }
-        )
+    
 
-        pDelete.addEventListener("click", (b) => {
-            b.preventDefault();
+        //Product deletion
+        pDelete.addEventListener("click", (a) => {
+            a.preventDefault();
             let deleteId = dataCart.id;
             let deletecolor = dataCart.color;
             let deleteItem = cart.filter(p => p.id != deleteId || p.color != deletecolor);
-            b.target.closest('.cart__item').remove();
+            a.target.closest('.cart__item').remove();
             localStorage.setItem("cart", JSON.stringify(deleteItem));
-            redirect();
+            window.location.reload();
         }
         )
-
-        function redirect() {
-            window.location.href = "cart.html"
-        }
     }
 }
 
+//Form and Regex
 document.getElementById("order").addEventListener("click", (e) => {
     e.preventDefault();
 
     let nameRegex = /^[a-zA-Z\-àèìòùÀÈÌÒÙáéíóúýÁÉÍÓÚÝâêîôûÂÊÎÔÛãñõÃÑÕäëïöüÿÄËÏÖÜŸçÇßØøÅåÆæœ\s]{2,50}$/;
-    let firstName = document.getElementById("firstName");
+    let firstName = document.getElementById("firstName").value;
     if (firstName.value == "" || nameRegex.test(firstName.value) == false) {
         document.getElementById("firstNameErrorMsg").textContent =
             "Merci de renseigner votre prénom";
@@ -150,7 +146,7 @@ document.getElementById("order").addEventListener("click", (e) => {
         document.getElementById("firstNameErrorMsg").textContent = "";
     }
 
-    let lastName = document.getElementById("lastName");
+    let lastName = document.getElementById("lastName").value;
     if (lastName.value == "" || nameRegex.test(lastName.value) == false) {
         document.getElementById("lastNameErrorMsg").textContent =
             "Merci de renseigner votre nom";
@@ -159,7 +155,7 @@ document.getElementById("order").addEventListener("click", (e) => {
         document.getElementById("lastNameErrorMsg").textContent = "";
     }
     let addressRegex = /^[a-zA-Z0-9àèìòùÀÈÌÒÙáéíóúýÁÉÍÓÚÝâêîôûÂÊÎÔÛäëïöüÿÄËÏÖÜŸçÇæœ,-\s{0,45}]+$/;
-    let address = document.getElementById("address");
+    let address = document.getElementById("address").value;
     if (address.value == "" || addressRegex.test(address.value) == false) {
         document.getElementById("addressErrorMsg").textContent =
             "Merci de renseigner votre adresse";
@@ -168,7 +164,7 @@ document.getElementById("order").addEventListener("click", (e) => {
         document.getElementById("addressErrorMsg").textContent = "";
     }
     let cityRegex = /^[a-zA-Z-àèìòùÀÈÌÒÙáéíóúýÁÉÍÓÚÝâêîôûÂÊÎÔÛäëïöüÿÄËÏÖÜŸçÇæœ\s]+$/;
-    let city = document.getElementById("city");
+    let city = document.getElementById("city").value;
     if (city.value == "" || cityRegex.test(city.value) == false) {
         document.getElementById("cityErrorMsg").textContent = "Merci de renseigner votre ville";
         return;
@@ -190,31 +186,34 @@ document.getElementById("order").addEventListener("click", (e) => {
         products.push(element.id);
     });
 
+    //Contact object gathering all the information of the form
     let contactInformations = {
         contact: {
-            firstName: firstName.value,
-            lastName: lastName.value,
-            address: address.value,
-            city: city.value,
-            email: email.value,
+            firstName: "firstName",
+            lastName: "lastName",
+            address: "address",
+            city: "city",
+            email: "email",
         },
         productId: products,
     };
 
+    //Post method for sending the form
     let cartConfirmation = {
-        method: "POST",
+        method: 'POST',
         headers: {
-            Accept: "application/json",
-            "Content-type": "application/json",
+            Accept: 'application/json;charset=utf-8'
         },
         body: JSON.stringify(contactInformations),
     };
 
     fetch("http://localhost:3000/api/products/order", cartConfirmation)
-        .then((response) => response.json())
+
+        .then((result) => result.json())
         .then(() => {
-            location.href = `./confirmation.html?orderid=${products}`;
             localStorage.clear();
+
+            location.href = `./confirmation.html?orderId=${products}`;
         })
 }
-);
+)

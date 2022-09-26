@@ -1,3 +1,5 @@
+//Retrieve the selected product id from the current product page
+
 let params = new URL(window.location.href);
 let urlId = params.searchParams.get('id');
 
@@ -12,7 +14,7 @@ function jsonCart() {
 fetch(`http://localhost:3000/api/products/${urlId}`)
     .then(res => res.json())
     .then((products) => allInformationsProduct(products))
-
+    //Selection and creation of DOM elements and display of elements in the DOM of the product page
 function allInformationsProduct(products) {
     // image product
     let imgDiv = document.querySelector(".item__img");
@@ -52,11 +54,13 @@ function allInformationsProduct(products) {
             color: color,
             quantity: parseInt(quantity)
         };
-        if (color === "" || quantity <= 0 || quantity >= 100) {
+        //Condition, color selection or quantity required
+        if (color === "" || quantity <= 1 || quantity >= 100) {
             alert("Veuillez choisir une couleur ou une quantité comprise entre 1 et 100");
             return
         }
         else {
+            //Condition, if u product has the same ID then we add it to the existing one
             if (cart) {
                 let index = cart.findIndex(newItemsameIdtem => newItemsameIdtem.id === dataProduct.id && newItemsameIdtem.color === dataProduct.color);
                 if (index === -1) {
@@ -74,6 +78,7 @@ function allInformationsProduct(products) {
         }
     })
 }
+
 function redirect() {
     window.location.href = "cart.html"
 }

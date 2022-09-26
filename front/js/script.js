@@ -1,10 +1,11 @@
-fetch("http://localhost:3000/api/products") 
-  .then(function(res) {
+// Api Data recovery
+fetch("http://localhost:3000/api/products")
+  .then(function (res) {
     if (res.ok) {
       return res.json();
     }
   })
-  
+  // Display of products on the home page
   .then(function allArticle(article) {
     article.forEach(products => {
 
@@ -31,10 +32,8 @@ fetch("http://localhost:3000/api/products")
       p.innerText = products.description
       article.appendChild(p)
     })
-}
-  ) 
-
-    .catch(function (err) {
-        // Une erreur est survenue
-    })
+  })
+  .catch(function (err) {
+    // Une erreur est survenue
+  })
 
