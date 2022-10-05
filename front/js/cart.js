@@ -92,31 +92,18 @@ for (let product of cart) {
         input.min = 1;
         input.max = 100;
         input.value = dataCart.quantity;
+        input.addEventListener("input", () => Updating(dataCart.id, input.value), TotalQuantityCart(), TotalPriceCart())
         quantityDiv.appendChild(input);
-
-        //Display the total number of products in the cart
-        let totalQuantity = document.querySelector("#totalQuantity")
-        let totalQ = cart.reduce((totalQ, product) => totalQ + product.quantity, 0)
-        totalQuantity.textContent = totalQ
-
-        //Display of total prices
-        let totalPrice = document.querySelector("#totalPrice")
-        cart.forEach((cart) => {
-            let totalP = cart.price * totalQ
-            totalPrice.textContent = totalP
-        })
 
         //Update quantity
         let itemQuantity = document.querySelectorAll(".itemQuantity");
         for (let i = 0; i < itemQuantity.length; i++) {
-           itemQuantity[i].addEventListener("click", () => {
-              let modifyQuantity = parseInt(itemQuantity[i].value);
-              cart[i].quantity = modifyQuantity;
-              localStorage.setItem("cart", JSON.stringify(cart));
-              window.location.reload();
-           });
+            itemQuantity[i].addEventListener("click", () => {
+                let modifyQuantity = parseInt(itemQuantity[i].value);
+                cart[i].quantity = modifyQuantity;
+                localStorage.setItem("cart", JSON.stringify(cart));
+            });
         }
-    
 
         //Product deletion
         pDelete.addEventListener("click", (a) => {
@@ -126,57 +113,80 @@ for (let product of cart) {
             let deleteItem = cart.filter(p => p.id != deleteId || p.color != deletecolor);
             a.target.closest('.cart__item').remove();
             localStorage.setItem("cart", JSON.stringify(deleteItem));
-            window.location.reload();
+        })
+
+        //Display the total number of products in the cart
+        function TotalQuantityCart() {
+            let totalQuantity = document.querySelector("#totalQuantity")
+            let totalQ = cart.reduce((totalQ, product) => totalQ + product.quantity, 0)
+            totalQuantity.textContent = totalQ
         }
-        )
+        //Display of total prices
+        function TotalPriceCart() {
+            let totalPrice = document.querySelector("#totalPrice")
+            cart.forEach((cart) => {
+                let totalP = product.price * cart.quantity
+                totalPrice.textContent = totalP
+            })
+        }
+
+        function Updating(id, newQuantity) {
+            const update = cart.find(item => item.id === id)
+            update.quantity = parseInt(newQuantity)
+            localStorage.setItem("cart", JSON.stringify(cart));
+            TotalQuantityCart()
+            TotalPriceCart()
+        }
     }
 }
+
 
 //Form and Regex
 document.getElementById("order").addEventListener("click", (e) => {
     e.preventDefault();
 
-    let nameRegex = /^[a-zA-Z\-àèìòùÀÈÌÒÙáéíóúýÁÉÍÓÚÝâêîôûÂÊÎÔÛãñõÃÑÕäëïöüÿÄËÏÖÜŸçÇßØøÅåÆæœ\s]{2,50}$/;
-    let firstName = document.getElementById("firstName").value;
+    let nameRegex = /^[a-zA-Z]+(?:[\s-][a-zA-Z]+)*$/;
+    let firstName = document.getElementById("firstName");
     if (firstName.value == "" || nameRegex.test(firstName.value) == false) {
         document.getElementById("firstNameErrorMsg").textContent =
             "Merci de renseigner votre prénom";
-        return;
+            return false;
     } else {
         document.getElementById("firstNameErrorMsg").textContent = "";
     }
 
-    let lastName = document.getElementById("lastName").value;
+    let lastName = document.getElementById("lastName");
     if (lastName.value == "" || nameRegex.test(lastName.value) == false) {
         document.getElementById("lastNameErrorMsg").textContent =
             "Merci de renseigner votre nom";
-        return;
+            return false;
     } else {
         document.getElementById("lastNameErrorMsg").textContent = "";
     }
     let addressRegex = /^[a-zA-Z0-9àèìòùÀÈÌÒÙáéíóúýÁÉÍÓÚÝâêîôûÂÊÎÔÛäëïöüÿÄËÏÖÜŸçÇæœ,-\s{0,45}]+$/;
-    let address = document.getElementById("address").value;
+    let address = document.getElementById("address");
     if (address.value == "" || addressRegex.test(address.value) == false) {
         document.getElementById("addressErrorMsg").textContent =
             "Merci de renseigner votre adresse";
-        return;
+            return false;
     } else {
         document.getElementById("addressErrorMsg").textContent = "";
     }
-    let cityRegex = /^[a-zA-Z-àèìòùÀÈÌÒÙáéíóúýÁÉÍÓÚÝâêîôûÂÊÎÔÛäëïöüÿÄËÏÖÜŸçÇæœ\s]+$/;
-    let city = document.getElementById("city").value;
+    let cityRegex = /^[a-zA-Z]+(?:[\s-][a-zA-Z]+)*$/;
+    let city = document.getElementById("city");
     if (city.value == "" || cityRegex.test(city.value) == false) {
         document.getElementById("cityErrorMsg").textContent = "Merci de renseigner votre ville";
-        return;
+        return false;
     } else {
         document.getElementById("cityErrorMsg").textContent = "";
     }
+
     let emailRegex = /[\w.-\S]+[@][\w\d\S]+[.][\w\d\S]{2,8}$/;
     let email = document.getElementById("email");
     if (email.value == "" || emailRegex.test(email.value) == false) {
         document.getElementById("emailErrorMsg").textContent =
             "Merci de renseigner votre adresse email";
-        return;
+        return false;
     } else {
         document.getElementById("emailErrorMsg").textContent = "";
     }
