@@ -116,6 +116,7 @@ for (let product of cart) {
       );
       a.target.closest(".cart__item").remove();
       localStorage.setItem("cart", JSON.stringify(deleteItem));
+      window.location.reload(false);
     });
 
     //Display the total number of products in the cart
