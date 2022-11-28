@@ -1,3 +1,6 @@
-let orderId = new URLSearchParams(document.location.search).get("orderId");
-document.getElementById("orderId").innerHTML = orderId;
-alert("Merci pour votre commande")
+let params = new URLSearchParams(document.location.search);
+let id = params.get("orderId");
+
+const orderId = document.getElementById("orderId");
+orderId.textContent = id;
+alert("Merci pour votre commande");

@@ -2,20 +2,20 @@
 let cart = jsonCart();
 function jsonCart() {
   let cart = localStorage.getItem("cart");
-  if (cart == null) {
+  if (cart === null || cart.length === 0) {
+    alert("Votre panier est vide");
+    window.location.href = "index.html";
     return [];
   } else {
     return JSON.parse(cart);
   }
 }
-
 //Object that contains all the information for each product
 for (let product of cart) {
   let dataCart = {
     id: product.id,
     color: product.color,
     quantity: product.quantity,
-    price: product.price,
   };
 
   //Displaying the contents of the Local Storage
@@ -222,7 +222,6 @@ document.getElementById("order").addEventListener("click", (e) => {
     .then((result) => result.json())
     .then(() => {
       localStorage.clear();
-
       location.href = `./confirmation.html?orderId=${products}`;
     });
 });
