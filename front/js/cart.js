@@ -221,7 +221,7 @@ document.getElementById("order").addEventListener("click", (e) => {
   fetch("http://localhost:3000/api/products/order", cartConfirmation)
     .then((result) => result.json())
     .then(() => {
-      localStorage.clear();
+      localStorage.setItem("orderId", products);
       location.href = `./confirmation.html?orderId=${products}`;
     });
 });

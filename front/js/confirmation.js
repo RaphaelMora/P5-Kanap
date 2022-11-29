@@ -1,5 +1,8 @@
-let showId = new URLSearchParams(document.location.search).get("orderId");
+let showId = localStorage.getItem("orderId");
 
-const orderId = document.getElementById("orderId");
-orderId.textContent = showId;
+let orderId = document.getElementById("orderId");
+orderId.innerText = showId;
+localStorage.clear();
+
 alert("Merci pour votre commande");
+localStorage.clear();
